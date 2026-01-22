@@ -15,7 +15,9 @@
 <body class="p-4 bg-base-100">
     {% include 'components/navbar.html' %}
     <header class="mb-4">
-        <h1 class="text-lg font-bold">現在の運転状況：</h1>
+    <h1 class="text-lg font-bold">
+        {% block header %}現在の運転状況：{% endblock %}
+    </h1>
     </header>
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}

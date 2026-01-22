@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tailwind & DaisyUI Practice</title>
+
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- DaisyUI CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Tailwind Config（必要ならここにカスタム設定を追加） -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {},
+            },
+        };
+    </script>
+</head>
+
+<body class="bg-base-200 p-6">
+    <h1 class=" font-bold mb-6">Tailwind & DaisyUI 練習</h1>
+
+    <!-- ここに自由にUIを作っていく -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="card w-96 bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title text-3xl border-l-4 border-gray-400">サンプルカード</h2>
+            <hr class="border-cyan-400">
+            <p>ここにテキストを入れて、クラスを付けたり外したりして練習できます。</p>
+            <span class="badge bg-cyan-500 text-white p-3">バッジ</span>
+            <div class="card-actions justify-end">
+                <button class="btn btn-primary">ボタン</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card w-96 bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title text-3xl border-l-4 border-gray-400">サンプルカード</h2>
+            <hr class="border-cyan-400">
+            <p>ここにテキストを入れて、クラスを付けたり外したりして練習できます。</p>
+            <span class="badge bg-cyan-500 text-white p-3">バッジ</span>
+            <div class="card-actions justify-end">
+                <button class="btn btn-primary">ボタン</button>
+                <a href="#" class="btn btn-sm py-0.5">リンクボタン</a>
+                <button class="btn btn-primary btn-sm py-1 text-xs">詳細</button>
+            </div>
+        </div>
+    </div>
+
+        <div class="card w-96 bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title text-3xl border-l-4 border-gray-400">サンプルカード</h2>
+            <hr class="border-cyan-400">
+            <p>ここにテキストを入れて、クラスを付けたり外したりして練習できます。</p>
+            <span class="badge bg-cyan-500 text-white p-3">バッジ</span>
+            <div class="card-actions justify-end">
+                <button class="btn btn-primary">ボタン</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+
+</html>

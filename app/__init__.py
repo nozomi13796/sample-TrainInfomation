@@ -1,3 +1,4 @@
+import os
 from flask import Flask, redirect, url_for
 from .extensions import db, migrate
 from .models import *
@@ -8,7 +9,11 @@ def create_app():
     app = Flask(__name__)
 
     # Configurations
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./delay_info.db'
+    if os.environ.get("RENDER"):
+        db_path = "/temp/delay_info.db"
+    else:
+        db_path = "delay_info.db"
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'dev'
 
@@ -24,5 +29,14 @@ def create_app():
     @app.route('/')
     def index():
         return redirect(url_for('delay.list_event'))
+
+    # Seed CLI command
+    @app.cli.command("seed")
+    def seed_command():
+        from seed.seed import run_seed
+        with app.app_context():
+            db.drop_all()
+            db.create_all()
+            run_seed()
 
     return app

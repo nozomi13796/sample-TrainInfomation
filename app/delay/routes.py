@@ -260,3 +260,31 @@ def api_board():
         "change": change,
         "delay": delay
     })
+
+# delay_info一覧表示
+@delay_bp.route('/list_info')
+def list_info():
+    delay_infos = DelayInfo.query.order_by(DelayInfo.modified_at.desc()).all()
+
+    items = []
+    for d in delay_infos:
+        title = "運休" if d.is_cancel else "経路変更" if d.is_change else "遅延"
+
+        items.append({
+            "id": d.iid,
+            "train": d.train.name,
+            "t_number": d.train.t_number,
+            "event": d.event.detail,
+            "delay_minutes": d.delay_minutes,
+            "modified_at": d.modified_at,
+            "title": title
+        })
+    return render_template('delay/list_info.html', items=items)
+
+# delay_info削除
+@delay_bp.route('/delete_info/<int:iid>', methods=['POST'])
+def delete_info(iid):
+    delay_info = DelayInfo.query.get_or_404(iid)
+    db.session.delete(delay_info)
+    db.session.commit()
+    return redirect(url_for('delay.list_info'))

@@ -1,8 +1,11 @@
 import csv
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from app import create_app
 from app.extensions import db
 from app.models import Reason, Event, Train, DelayInfo, Station, TimeTable
+
+def jst_now():
+    return datetime.utcnow() + timedelta(hours=9)
 
 def load_csv(path):
     with open(path, encoding="utf-8") as f:
@@ -21,7 +24,7 @@ def seed_event():
             rid=int(rid),
             detail=detail,
             date=date.today(),  # ← CSV の値を無視して今日にする
-            modified_at=datetime.utcnow()  # ← 現在時刻にする
+            modified_at=jst_now()  # ← 現在時刻にする
         ))
 
 
@@ -56,17 +59,14 @@ def seed_delay_info():
             iid=int(iid),
             tid=int(tid),
             eid=int(eid),
-            modified_at=datetime.utcnow(),  # ← 現在時刻にする
+            modified_at=jst_now(),  # ← 現在時刻にする
             delay_minutes=int(delay),
             is_cancel=bool(int(is_cancel)),
             is_change=bool(int(is_change))
         ))
 
 
-def run():
-    db.drop_all()
-    db.create_all()
-
+def run_seed():
     seed_reason()
     seed_event()
     seed_station()
@@ -76,8 +76,3 @@ def run():
 
     db.session.commit()
     print("Seed completed!")
-
-if __name__ == "__main__":
-    app = create_app()
-    with app.app_context():
-        run()

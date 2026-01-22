@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}遅延情報一覧{% endblock %}
+
+{% block header %}遅延情報一覧{% endblock %}
+
+{% block content %}
+
+<div class="overflow-x-auto">
+    <table class="table table-zebra w-full">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>列車名</th>
+                <th>列車番号</th>
+                <th>事象</th>
+                <th>遅延分</th>
+                <th>種別</th>
+                <th>登録日時</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.train }}</td>
+                <td>{{ item.t_number }}</td>
+                <td>{{ item.event }}</td>
+                <td>{{ item.delay_minutes }}</td>
+                <td>{{ item.title }}</td>
+                <td>{{ item.modified_at }}</td>
+                <td>
+                    <form action="{{ url_for('delay.delete_info', iid=item.id) }}" method="post">
+                        <button class="btn btn-error btn-sm" type="submit">
+                            削除
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
