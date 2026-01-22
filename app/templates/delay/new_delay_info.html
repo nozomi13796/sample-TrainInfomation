@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}遅延情報登録{% endblock %}
+
+{% block content %}
+
+<div class="max-w-xl mx-auto bg-base-200 p-6 rounded-lg shadow">
+
+  <h2 class="text-xl font-bold mb-4">
+    遅延情報登録：{{ event.reason.name }}（{{ event.detail }}）
+  </h2>
+
+  <form method="POST">
+    {{ form.hidden_tag() }}
+
+    <!-- 列車番号 -->
+    <label class="form-control w-full mb-4">
+      <div class="label"><span class="label-text">列車番号（数字）</span></div>
+      {{ form.t_number(class="input input-bordered") }}
+      {% for error in form.t_number.errors %}
+      <p class="text-red-500 text-sm">{{ error }}</p>
+      {% endfor %}
+    </label>
+
+    <!-- 番号種別 -->
+    <label class="form-control w-full mb-4">
+      <div class="label"><span class="label-text">番号種別（E/M）</span></div>
+      {{ form.alpha(class="select select-bordered") }}
+      {% for error in form.alpha.errors %}
+      <p class="text-red-500 text-sm">{{ error }}</p>
+      {% endfor %}
+    </label>
+
+    <!-- 遅延分数 -->
+    <label class="form-control w-full mb-4">
+      <div class="label"><span class="label-text">遅延分数</span></div>
+      {{ form.delay_minutes(class="input input-bordered") }}
+      {% for error in form.delay_minutes.errors %}
+      <p class="text-red-500 text-sm">{{ error }}</p>
+      {% endfor %}
+    </label>
+
+    <!-- 運休・経路変更 -->
+    <div class="flex gap-6 mb-4">
+      <label class="cursor-pointer flex items-center gap-2">
+        {{ form.is_cancel(class="checkbox") }}
+        <span>運休</span>
+      </label>
+
+      <label class="cursor-pointer flex items-center gap-2">
+        {{ form.is_change(class="checkbox") }}
+        <span>経路変更</span>
+      </label>
+    </div>
+
+    <!-- 送信 -->
+    {{ form.submit(class="btn btn-primary w-full") }}
+
+  </form>
+</div>
+
+{% endblock %}

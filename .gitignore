@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+
+# SQLite database
+*.db
+instance/
+
+# Flask / Werkzeug
+*.log
+
+# Migrations (optional: keep if you want to track)
+migrations/versions/
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+
+# Environment variables
+.env

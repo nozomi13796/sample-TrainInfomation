@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}運行情報 表示設定{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-10">
+
+  <h1 class="text-2xl font-bold mb-6">運行情報 表示設定</h1>
+
+  <form action="{{ url_for('delay.station_board') }}" method="get" class="space-y-4">
+
+    <!-- ダイヤ日付 -->
+    <div>
+      <label class="label"><span class="label-text">ダイヤ日付</span></label>
+      <input type="date" name="date" value="{{ today }}" class="input input-bordered w-full" required>
+    </div>
+
+    <!-- 駅選択 -->
+    <div>
+      <label class="label"><span class="label-text">駅</span></label>
+      <select name="sid" class="select select-bordered w-full" required>
+        {% for s in stations %}
+          <option value="{{ s.sid }}">{{ s.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button class="btn btn-primary w-full mt-4">表示する</button>
+
+  </form>
+
+</div>
+{% endblock %}

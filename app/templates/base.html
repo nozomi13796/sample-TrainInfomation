@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}運行情報配信サービス{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- daisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.css" rel="stylesheet" />
+</head>
+
+<body class="p-4 bg-base-100">
+    {% include 'components/navbar.html' %}
+    <header class="mb-4">
+        <h1 class="text-lg font-bold">現在の運転状況：</h1>
+    </header>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="max-w-xl mx-auto mt-4">
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} shadow mb-2">
+            <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</body>
+
+</html>

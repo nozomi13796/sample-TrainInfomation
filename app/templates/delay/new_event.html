@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}イベント登録{% endblock %}
+
+{% block content %}
+
+<div class="max-w-xl mx-auto bg-base-200 p-6 rounded-lg shadow">
+
+    <h2 class="text-xl font-bold mb-4">{{ today }}: イベント登録</h2>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <!-- 理由 -->
+        <label class="form-control w-full mb-4">
+            <div class="label"><span class="label-text">事象</span></div>
+            {{ form.rid(class="select select-bordered") }}
+            {% for error in form.rid.errors %}
+            <p class="text-red-500 text-sm">{{ error }}</p>
+            {% endfor %}
+        </label>
+
+        <!-- 詳細 -->
+        <label class="form-control w-full mb-4">
+            <div class="label"><span class="label-text">件名</span></div>
+            {{ form.detail(class="textarea textarea-bordered", rows="3") }}
+        </label>
+
+        {{ form.submit(class="btn btn-primary w-full") }}
+    </form>
+
+</div>
+
+
+<!-- 今日のイベント一覧 -->
+<div class="max-w-xl mx-auto mt-10">
+    {% if today_events %}
+    <h3 class="text-lg font-bold mb-2">今日のイベント一覧</h3>
+
+    <div class="flex flex-col gap-3">
+        {% for e in today_events %}
+        <div class="p-4 bg-base-200 rounded shadow">
+            <p class="font-bold flex items-center gap-2">
+                {{ e.reason.name }}
+                <span class="badge badge-primary">{{ event_counts[e.eid] }} 件</span>
+            </p>
+            <p>{{ e.detail }}</p>
+            <p class="text-sm opacity-70">{{ e.modified_at }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-sm opacity-70">本日のイベントはまだ登録されていません。</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

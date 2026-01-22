@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block title %}{{ station.name }} 駅 運行情報{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto mt-6">
+
+    <h1 class="text-2xl font-bold mb-6">{{ station.name }}駅 運行情報</h1>
+
+    <!-- 運休 -->
+    <div id="cancel-area">
+        {% if cancel_grouped %}
+        <h2 class="text-xl font-bold text-red-600 mb-2">運転取りやめ</h2>
+        {% for event, items in cancel_grouped.items() %}
+        <p class="text-sm text-gray-600 mb-1">{{ event }}</p>
+
+        {% for p in items %}
+        <div class="alert alert-error mb-2">
+            <span>
+                {{ p.train.name }}
+                {% if p.train.number %}{{ p.train.number }}号{% endif %}
+                （{{ p.tt.departure_time.strftime("%H:%M") }} 発）
+            </span>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- 遅延 -->
+    <div id="delay-area">
+        {% if delay_grouped %}
+        <h2 class="text-xl font-bold text-yellow-600 mt-6 mb-2">列車の遅れ</h2>
+        {% for event, items in delay_grouped.items() %}
+        <p class="text-sm text-gray-600 mb-1">{{ event }}</p>
+
+        {% for p in items %}
+        <div class="alert alert-warning mb-2">
+            <span>
+                {{ p.train.name }}
+                {% if p.train.number %}{{ p.train.number }}号{% endif %}
+                は {{ p.delay.delay_minutes }} 分遅れ
+                → 予定発 {{ p.predicted_time.strftime("%H:%M") }}
+            </span>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- 経路変更 -->
+    <div id="change-area">
+        {% if change_grouped %}
+        <h2 class="text-xl font-bold text-blue-600 mt-6 mb-2">運転経路変更</h2>
+        {% for event, items in change_grouped.items() %}
+        <p class="text-sm text-gray-600 mb-1">{{ event }}</p>
+
+        {% for p in items %}
+        <div class="alert alert-info mb-2">
+            <span>
+                {{ p.train.name }}
+                {% if p.train.number %}{{ p.train.number }}号{% endif %}
+                （{{ p.tt.departure_time.strftime("%H:%M") }} 発）
+            </span>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- 運行情報なし -->
+    {% if not cancel_grouped and not change_grouped and not delay_grouped %}
+    <p class="text-gray-500 mt-6">現在、運行情報はありません。</p>
+    {% endif %}
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        // URL から sid と date を取得
+        const params = new URLSearchParams(window.location.search);
+        const sid = params.get("sid");
+        const date = params.get("date");
+
+        async function loadBoard() {
+            try {
+                const res = await fetch(`/delay/api/board?sid=${sid}&date=${date}`);
+                const data = await res.json();
+
+                renderDelay(data);
+                renderCancel(data);
+                renderChange(data);
+
+            } catch (e) {
+                console.error("API error:", e);
+            }
+        }
+
+        // -------------------------
+        // 遅延
+        // -------------------------
+        function renderDelay(data) {
+            const delayArea = document.getElementById("delay-area");
+            delayArea.innerHTML = "";
+
+            const delay = data.delay;
+
+            if (!delay || Object.keys(delay).length === 0) {
+                return;
+            }
+
+            const title = document.createElement("h2");
+            title.className = "text-xl font-bold text-yellow-600 mt-6 mb-2";
+            title.textContent = "列車の遅れ";
+            delayArea.appendChild(title);
+
+            for (const [eventName, trains] of Object.entries(delay)) {
+
+                const eventText = document.createElement("p");
+                eventText.className = "text-sm text-gray-600 mb-1";
+                eventText.textContent = eventName;
+                delayArea.appendChild(eventText);
+
+                trains.forEach(t => {
+                    const row = document.createElement("div");
+                    row.className = "alert alert-warning mb-2";
+                    row.innerHTML = `
+                    <span>
+                        ${t.train_name}
+                        ${t.train_number ? t.train_number + "号" : ""}
+                        （${t.departure_time} 発）
+                        は ${t.delay_minutes} 分遅れ
+                        → 予定発 ${t.predicted_time}
+                    </span>
+                `;
+                    delayArea.appendChild(row);
+                });
+            }
+        }
+
+        // -------------------------
+        // 運休
+        // -------------------------
+        function renderCancel(data) {
+            const cancelArea = document.getElementById("cancel-area");
+            cancelArea.innerHTML = "";
+
+            const cancel = data.cancel;
+
+            if (!cancel || Object.keys(cancel).length === 0) {
+                return;
+            }
+
+            const title = document.createElement("h2");
+            title.className = "text-xl font-bold text-red-600 mt-6 mb-2";
+            title.textContent = "運転取りやめ";
+            cancelArea.appendChild(title);
+
+            for (const [eventName, trains] of Object.entries(cancel)) {
+
+                const eventText = document.createElement("p");
+                eventText.className = "text-sm text-gray-600 mb-1";
+                eventText.textContent = eventName;
+                cancelArea.appendChild(eventText);
+
+                trains.forEach(t => {
+                    const row = document.createElement("div");
+                    row.className = "alert alert-error mb-2";
+                    row.innerHTML = `
+                    <span>
+                        ${t.train_name}
+                        ${t.train_number ? t.train_number + "号" : ""}
+                        （${t.departure_time} 発）
+                    </span>
+                `;
+                    cancelArea.appendChild(row);
+                });
+            }
+        }
+
+        // -------------------------
+        // 経路変更
+        // -------------------------
+        function renderChange(data) {
+            const changeArea = document.getElementById("change-area");
+            changeArea.innerHTML = "";
+
+            const change = data.change;
+
+            if (!change || Object.keys(change).length === 0) {
+                return;
+            }
+
+            const title = document.createElement("h2");
+            title.className = "text-xl font-bold text-blue-600 mt-6 mb-2";
+            title.textContent = "運転経路変更";
+            changeArea.appendChild(title);
+
+            for (const [eventName, trains] of Object.entries(change)) {
+
+                const eventText = document.createElement("p");
+                eventText.className = "text-sm text-gray-600 mb-1";
+                eventText.textContent = eventName;
+                changeArea.appendChild(eventText);
+
+                trains.forEach(t => {
+                    const row = document.createElement("div");
+                    row.className = "alert alert-info mb-2";
+                    row.innerHTML = `
+                    <span>
+                        ${t.train_name}
+                        ${t.train_number ? t.train_number + "号" : ""}
+                        （${t.departure_time} 発）
+                    </span>
+                `;
+                    changeArea.appendChild(row);
+                });
+            }
+        }
+
+        // 初回ロード
+        loadBoard();
+
+        // 10秒ごとに更新
+        setInterval(loadBoard, 10000);
+    });
+</script>
+{% endblock %}
