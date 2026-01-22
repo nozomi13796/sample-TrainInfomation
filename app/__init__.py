@@ -10,7 +10,7 @@ def create_app():
 
     # Configurations
     if os.environ.get("RENDER"):
-        db_path = "/temp/delay_info.db"
+        db_path = "/tmp/delay_info.db"
     else:
         db_path = "delay_info.db"
     app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
