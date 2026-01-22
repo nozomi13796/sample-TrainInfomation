@@ -102,8 +102,9 @@ def new_delay_info(eid):
 # 掲示板表示駅および日付の選択画面
 @delay_bp.route("/board/select")
 def board_select():
+    jst_today = datetime.now()+ timedelta(hours=9)
     stations = Station.query.order_by(Station.sid).all()
-    today_str = date.today().strftime("%Y-%m-%d")
+    today_str = jst_today.strftime("%Y-%m-%d")
     return render_template("delay/select_board.html", stations=stations, today=today_str)
 
 # 駅掲示板表示
