@@ -1,3 +1,0 @@
-dep_time = tt.departure_time
-if isinstance(dep_time, datetime):
-    dep_time = dep_time.time()
